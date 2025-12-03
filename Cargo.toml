@@ -1,0 +1,31 @@
+[package]
+name = "felipe"
+version = "0.1.0"
+edition = "2021"
+description = "Cyberpunk file manager - anagram of Filepe (FILE + pe)"
+authors = ["Felipe Contributors"]
+license = "MIT"
+
+[dependencies]
+bevy = { version = "0.14", default-features = false, features = [
+    "bevy_winit",
+    "bevy_render",
+    "bevy_core_pipeline",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_ui",
+    "bevy_gizmos",
+    "bevy_pbr",
+    "png",
+    "x11",
+] }
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+# Enable fast compiles for development
+[profile.release]
+lto = "thin"
