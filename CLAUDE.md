@@ -1,4 +1,4 @@
-# Filepe - Cyberpunk File Manager
+# Felipe - Cyberpunk File Manager
 
 ## コンセプト
 
@@ -17,23 +17,23 @@
 
 ## 名前の由来
 
-**Filepe** = FILE + pe (Parallel Experience / Point of Entry)
+**Felipe** = Filepe のアナグラム
 
 ```
-Filepe
-^^^^
-FILE (そのまま含む)
+Felipe  ←→  Filepe
+  ↑↓          ↑↓
+  e↔i で入れ替え
 ```
 
-- **FILE** がそのまま入っている
-- **pe** = Parallel Experience（並列体験）または Point of Entry（入口）
-- 発音は「フィリペ」— フィリップに近い響き
+- **Filepe** = FILE + pe (Parallel Experience / Point of Entry)
+- e と i を入れ替えると **Felipe**（フィリップのスペイン語版）
+- ロゴ: e↔i の入れ替え矢印（Amazonのa→zのように）
 
 ## 差別化ポイント
 
 ### 1. 子孫フォルダの同時一覧
 
-既存ファイラーは1階層ずつしか見えない。Filepeは3D空間で複数階層を同時に表示。
+既存ファイラーは1階層ずつしか見えない。Felipeは3D空間で複数階層を同時に表示。
 
 ```
 /project
@@ -64,7 +64,7 @@ FILE (そのまま含む)
 - node_modules → 無数の小さな本の密集地帯
 - 謎の巨大ファイル → 異様にそびえる塔
 
-WinDirStatは「分析」、Filepeは「探索・散歩」。
+WinDirStatは「分析」、Felipeは「探索・散歩」。
 
 ### 3. Parallel Experience
 

@@ -1,9 +1,9 @@
 [package]
-name = "filepe"
+name = "felipe"
 version = "0.1.0"
 edition = "2021"
-description = "Cyberpunk file manager - FILE + Parallel Experience"
-authors = ["Filepe Contributors"]
+description = "Cyberpunk file manager - anagram of Filepe (FILE + pe)"
+authors = ["Felipe Contributors"]
 license = "MIT"
 
 [dependencies]

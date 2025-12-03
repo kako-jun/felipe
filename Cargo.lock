@@ -1424,7 +1424,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "filepe"
+name = "felipe"
 version = "0.1.0"
 dependencies = [
  "bevy",

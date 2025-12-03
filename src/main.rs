@@ -1,6 +1,6 @@
-//! Filepe - Cyberpunk File Manager
+//! Felipe - Cyberpunk File Manager
 //!
-//! FILE + Parallel Experience
+//! Felipe = anagram of Filepe (FILE + Parallel Experience)
 //! Inspired by TRON and Philip's Bookshelf.
 //! Orange wireframe aesthetics, vim keybindings, 3D navigation.
 
@@ -384,7 +384,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
-                title: "Filepe - File Manager".to_string(),
+                title: "Felipe - File Manager".to_string(),
                 resolution: (800., 700.).into(),
                 ..default()
             }),
