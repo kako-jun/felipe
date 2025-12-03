@@ -1,9 +1,9 @@
 [package]
-name = "felipe"
+name = "filepe"
 version = "0.1.0"
 edition = "2021"
-description = "A cyberpunk file manager inspired by TRON and Philip's Bookshelf"
-authors = ["Felipe Contributors"]
+description = "Cyberpunk file manager - FILE + Parallel Experience"
+authors = ["Filepe Contributors"]
 license = "MIT"
 
 [dependencies]

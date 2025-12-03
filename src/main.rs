@@ -1,6 +1,7 @@
-//! Felipe - Cyberpunk File Manager
+//! Filepe - Cyberpunk File Manager
 //!
-//! A file manager inspired by TRON and Philip's Bookshelf.
+//! FILE + Parallel Experience
+//! Inspired by TRON and Philip's Bookshelf.
 //! Orange wireframe aesthetics, vim keybindings, 3D navigation.
 
 use bevy::prelude::*;
@@ -383,7 +384,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
-                title: "Felipe - File Manager".to_string(),
+                title: "Filepe - File Manager".to_string(),
                 resolution: (800., 700.).into(),
                 ..default()
             }),
