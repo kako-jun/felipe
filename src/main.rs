@@ -26,7 +26,8 @@ const ITEM_SPACING: f32 = 2.0;
 const BASE_HEIGHT: f32 = 0.5;
 /// Max height for files
 const MAX_HEIGHT: f32 = 10.0;
-/// Bookshelf depth per GB
+/// Bookshelf depth per GB (reserved for future folder depth visualization)
+#[allow(dead_code)]
 const DEPTH_PER_GB: f32 = 1.0;
 
 // =============================================================================
@@ -68,6 +69,8 @@ enum VimMode {
     #[default]
     Normal,
     Visual,
+    /// Reserved for future command mode implementation (e.g., :wq, :q, etc.)
+    #[allow(dead_code)]
     Command,
 }
 
@@ -96,6 +99,12 @@ impl Default for CameraState {
 /// Marker for file/folder 3D entities
 #[derive(Component)]
 struct FileEntity {
+    index: usize,
+}
+
+/// Marker for file/folder text labels
+#[derive(Component)]
+struct FileLabel {
     index: usize,
 }
 
@@ -140,28 +149,38 @@ fn setup_camera(mut commands: Commands, camera_state: Res<CameraState>) {
 }
 
 fn setup_ui(mut commands: Commands) {
-    // Path display at top
+    // Background panel for path display
     commands.spawn((
-        TextBundle {
-            text: Text::from_section(
-                "",
-                TextStyle {
-                    font_size: 20.0,
-                    color: FELIPE_ORANGE,
-                    ..default()
-                },
-            ),
+        NodeBundle {
             style: Style {
                 position_type: PositionType::Absolute,
-                top: Val::Px(10.0),
-                left: Val::Px(10.0),
+                top: Val::Px(0.0),
+                left: Val::Px(0.0),
+                right: Val::Px(0.0),
+                padding: UiRect::all(Val::Px(10.0)),
                 ..default()
             },
+            background_color: BackgroundColor(Color::srgba(0.02, 0.02, 0.02, 0.9)),
             ..default()
         },
-        PathDisplay,
         UiElement,
-    ));
+    ))
+    .with_children(|parent| {
+        parent.spawn((
+            TextBundle {
+                text: Text::from_section(
+                    "",
+                    TextStyle {
+                        font_size: 24.0,
+                        color: FELIPE_ORANGE,
+                        ..default()
+                    },
+                ),
+                ..default()
+            },
+            PathDisplay,
+        ));
+    });
 
     // Mode indicator at bottom left
     commands.spawn((
@@ -169,8 +188,8 @@ fn setup_ui(mut commands: Commands) {
             text: Text::from_section(
                 "-- NORMAL --",
                 TextStyle {
-                    font_size: 16.0,
-                    color: FELIPE_ORANGE_DIM,
+                    font_size: 18.0,
+                    color: FELIPE_ORANGE,
                     ..default()
                 },
             ),
@@ -190,10 +209,10 @@ fn setup_ui(mut commands: Commands) {
     commands.spawn((
         TextBundle {
             text: Text::from_section(
-                "hjkl:move  l/Enter:open  h:back  /:search",
+                "hjkl:move  l/Enter:open  h:back  g/G:top/bottom  v:visual",
                 TextStyle {
-                    font_size: 14.0,
-                    color: FELIPE_GRID,
+                    font_size: 16.0,
+                    color: FELIPE_ORANGE_DIM,
                     ..default()
                 },
             ),
@@ -272,10 +291,11 @@ fn spawn_file_entities(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     current_dir: Res<CurrentDirectory>,
-    existing_query: Query<Entity, With<FileEntity>>,
+    existing_entity_query: Query<Entity, With<FileEntity>>,
+    existing_label_query: Query<Entity, With<FileLabel>>,
 ) {
     // Only spawn if directory was just loaded
-    if !existing_query.is_empty() || current_dir.entries.is_empty() {
+    if !existing_entity_query.is_empty() || !existing_label_query.is_empty() || current_dir.entries.is_empty() {
         return;
     }
 
@@ -333,16 +353,46 @@ fn spawn_file_entities(
             },
             FileEntity { index: i },
         ));
+
+        // Spawn text label above the file/folder
+        let label_color = if i == current_dir.selected_index {
+            FELIPE_ORANGE
+        } else {
+            FELIPE_ORANGE_DIM
+        };
+
+        commands.spawn((
+            Text2dBundle {
+                text: Text::from_section(
+                    &entry.name,
+                    TextStyle {
+                        font_size: 30.0,
+                        color: label_color,
+                        ..default()
+                    },
+                ),
+                transform: Transform::from_xyz(x, height + 1.5, z)
+                    .with_scale(Vec3::splat(0.03)),
+                ..default()
+            },
+            FileLabel { index: i },
+        ));
     }
 }
 
 fn despawn_file_entities(
     mut commands: Commands,
     current_dir: Res<CurrentDirectory>,
-    query: Query<Entity, With<FileEntity>>,
+    entity_query: Query<Entity, With<FileEntity>>,
+    label_query: Query<Entity, With<FileLabel>>,
 ) {
     if current_dir.needs_reload {
-        for entity in query.iter() {
+        // Despawn 3D entities
+        for entity in entity_query.iter() {
+            commands.entity(entity).despawn();
+        }
+        // Despawn text labels
+        for entity in label_query.iter() {
             commands.entity(entity).despawn();
         }
     }
@@ -514,24 +564,45 @@ fn update_file_materials(
     }
 }
 
+fn update_file_labels(
+    current_dir: Res<CurrentDirectory>,
+    mut label_query: Query<(&FileLabel, &mut Text)>,
+) {
+    for (file_label, mut text) in label_query.iter_mut() {
+        let is_selected = file_label.index == current_dir.selected_index;
+        text.sections[0].style.color = if is_selected {
+            FELIPE_ORANGE
+        } else {
+            FELIPE_ORANGE_DIM
+        };
+    }
+}
+
 fn update_ui(
     current_dir: Res<CurrentDirectory>,
     vim_mode: Res<VimMode>,
-    mut path_query: Query<&mut Text, (With<PathDisplay>, Without<ModeIndicator>)>,
+    mut path_query: Query<&mut Text, With<PathDisplay>>,
     mut mode_query: Query<&mut Text, (With<ModeIndicator>, Without<PathDisplay>)>,
 ) {
     // Update path display
     for mut text in path_query.iter_mut() {
-        let selected_name = current_dir
-            .entries
-            .get(current_dir.selected_index)
-            .map(|e| e.name.as_str())
-            .unwrap_or("");
+        let selected_entry = current_dir.entries.get(current_dir.selected_index);
+        let selected_name = selected_entry.map(|e| e.name.as_str()).unwrap_or("");
+        let file_info = if let Some(entry) = selected_entry {
+            if entry.is_dir {
+                format!(" [DIR]")
+            } else {
+                format!(" [{:.2} MB]", entry.size as f64 / (1024.0 * 1024.0))
+            }
+        } else {
+            String::new()
+        };
 
         text.sections[0].value = format!(
-            "{}\n> {}",
+            "📂 {}\n▶ {}{}",
             current_dir.path.to_string_lossy(),
-            selected_name
+            selected_name,
+            file_info
         );
     }
 
@@ -574,6 +645,7 @@ fn main() {
                 handle_mouse_wheel,
                 update_camera,
                 update_file_materials,
+                update_file_labels,
                 update_ui,
                 draw_grid,
             ),

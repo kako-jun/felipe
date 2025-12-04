@@ -1,0 +1,14 @@
+# Cargo configuration for Felipe
+# Reduces memory usage during compilation
+
+[build]
+# Limit parallel jobs to reduce memory consumption
+# Adjust this number based on your available RAM
+# 1 = slowest but least memory
+# 2-4 = good balance
+jobs = 2
+
+# Use LLD linker for faster linking (Windows)
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]

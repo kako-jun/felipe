@@ -16,6 +16,8 @@ bevy = { version = "0.14", default-features = false, features = [
     "bevy_ui",
     "bevy_gizmos",
     "bevy_pbr",
+    "default_font",
+    "tonemapping_luts",
     "png",
     "x11",
 ] }

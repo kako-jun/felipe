@@ -1,0 +1,46 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug Felipe",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=felipe",
+                    "--package=felipe"
+                ],
+                "filter": {
+                    "name": "felipe",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "RUST_LOG": "debug",
+                "RUST_BACKTRACE": "1"
+            }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug Felipe (Release)",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--release",
+                    "--bin=felipe",
+                    "--package=felipe"
+                ],
+                "filter": {
+                    "name": "felipe",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
